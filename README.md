@@ -47,7 +47,7 @@ Here is the main code pipeline and parameters used to achieve the results shown 
 After proving the effectiveness of the algorithm in a set of test images we tested the algorithm in a video stream.
 The output video shown below includes two scenarios: one with only white lines on the lane and the other containing yellow line on the left side.
 
-![Video output](https://youtu.be/kWLLaCt5TG0)
+[Video output](https://youtu.be/kWLLaCt5TG0)
 
 
 
