@@ -1,4 +1,58 @@
-#**Finding Lane Lines on the Road** 
+# Lane Lines Detection
+
+![Example](processed_images/solidWhiteCurve.jpg)
+
+## Introduction
+
+The detection of lane lines from a video camera mounted at the front of the vehicle is performed using computer vision techniques.
+In this project we make use of canny edge detection and Hough transform.
+Here is the main code pipeline and parameters used to achieve the results shown in the video below (see Results section).
+
+
+### 1 convert to gray
+    image_gray = grayscale(image);
+
+### 2 apply gaussian blur to smoothen the image
+    kernel_size = 5; #should be an odd number
+    image_gaus = gaussian_blur(image_gray, kernel_size);
+
+### 3 apply canny filter
+    low_threshold =50;
+    high_threshold = 200;
+    image_canny = canny(image_gaus, low_threshold, high_threshold);
+
+### 4 apply mask
+    imshape = image.shape;
+    vertices = np.array([[(0,imshape[0]),(imshape[1]/2,imshape[0]*4/7), (imshape[1], imshape[0])]], dtype=np.int32);
+    image_mask = region_of_interest(image_canny, vertices);
+
+### 5 apply Hough transform
+    rho = 2 # distance resolution in pixels of the Hough grid
+    theta = 1*np.pi/180 # angular resolution in radians of the Hough grid
+    threshold = 25     # 25 minimum number of votes (intersections in Hough grid cell)
+    min_line_length = 40 #15 minimum number of pixels making up a line
+    max_line_gap = 70   #3 maximum gap in pixels between connectable line segments
+    lower_x = 0;
+    upper_x = imshape[1];
+    lower_y = imshape[0]*4/7;
+    upper_y = imshape[0];
+    image_hough = hough_lines(image_mask, rho, theta, threshold, min_line_length, max_line_gap);
+    
+### 6 annotated image
+    image_annotated = weighted_img(image_hough, image);
+
+
+## Results
+
+After proving the effectiveness of the algorithm in a set of test images we tested the algorithm in a video stream.
+The output video shown below includes two scenarios: one with only white lines on the lane and the other containing yellow line on the left side.
+
+![Video output](https://youtu.be/kWLLaCt5TG0)
+
+
+
+
+#**Instructions** 
 <img src="laneLines_thirdPass.jpg" width="480" alt="Combined Image" />
 
 When we drive, we use our eyes to decide where to go.  The lines on the road that show us where the lanes are act as our constant reference for where to steer the vehicle.  Naturally, one of the first things we would like to do in developing a self-driving car is to automatically detect lane lines using an algorithm.
